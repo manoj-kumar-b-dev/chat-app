@@ -1,0 +1,24 @@
+.container
+{
+ border:none;
+ background: linear-gradient(to left,rgba(44, 78, 181, 0.799),rgba(40, 176, 255, 0.74));
+}
+.today-forecast::-webkit-scrollbar
+{ 
+  background:rgba(22, 109, 223, 0.755);
+  border-radius:6px;
+  height:17px;
+}
+.today-forecast::-webkit-scrollbar-thumb
+{
+  border-radius: 10px;
+  background:rgba(81, 162, 237, 0.862);
+  cursor: pointer;
+}
+.aqi
+{
+  background-color: rgb(27, 150, 221);
+}
+
+
+
