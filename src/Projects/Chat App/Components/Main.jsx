@@ -1,13 +1,10 @@
 import React, { useEffect } from 'react'
 import  db  from '../Scripts/firebase'
 import {
-  collection,
-  addDoc,
-  onSnapshot,
-  query,
-  orderBy,
-  serverTimestamp
-} from "firebase/firestore";
+  push,
+  ref,
+  onValue
+} from "firebase/database";
 
 function Main() {
 const [message,setMessage]=React.useState("");
@@ -15,14 +12,15 @@ const [recievedMessage,setRecievedMessage]  =React.useState();
 //for recieve message
 React.useEffect(()=>
 {
-  const q=query(
-    collection(db,"messages"),orderBy("time")
-  );
-  const unsubscribe=onSnapshot(q,(snapshot)=>
+  
+  onValue(ref(db,"messages"),(snapshot)=>
   {
-    setRecievedMessage(snapshot.docs.map(doc=>({id:doc.id,...doc.data()})));
-  });
-  return () => unsubscribe()
+    const data=snapshot.val();
+    if(data)
+    {
+      setRecievedMessage(Object.values(data))
+    }
+  })
 },[])
 
 //for sending message
@@ -30,9 +28,9 @@ React.useEffect(()=>
   const sendMessage=async ()=>
   {
     if(!message) return ;
-    await addDoc(collection(db,"messages"),{
+    await push(ref(db,"messages"),{
       text:message,
-      time:serverTimestamp()
+      time:Date.now()
     });
     setMessage("")
   }
