@@ -50,7 +50,7 @@ React.useEffect(()=>
           <label htmlFor="fileInput">File</label>
           <input onKeyUp={e=>e.key==="Enter"?sendMessage():"null"} onChange={(e)=>setMessage(e.target.value)} className=' outline-none pl-5 py-2 w-80 bg-[white] h-12 rounded-3xl' placeholder='hello' type="text" />
           <button onClick={sendMessage} className='cursor-pointer '>
-            <img className=' rounded-3xl w-12 h-12 ml-2 h-8 object-cover' src=".\src\Projects\Chat App\Images\Send-Icon.jpg" alt="" />
+            <img className=' rounded-3xl w-12 h-12 ml-2 h-8 object-cover' src="./Images/Send-Icon.jpg" alt="" />
           </button>
           
         </section>
