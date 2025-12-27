@@ -9,10 +9,10 @@ import {
 function Main() {
 const [message,setMessage]=React.useState("");
 const [recievedMessage,setRecievedMessage]  =React.useState();
-//for recieve message
+
 React.useEffect(()=>
 {
-  
+  console.log("recieve message");       //this is for recieve message from firebase database
   onValue(ref(db,"messages"),(snapshot)=>
   {
     const data=snapshot.val();
@@ -23,7 +23,6 @@ React.useEffect(()=>
   })
 },[])
 
-//for sending message
 
   const sendMessage=async ()=>
   {
@@ -33,6 +32,7 @@ React.useEffect(()=>
       time:Date.now()
     });
     setMessage("")
+    
   }
 
   return (

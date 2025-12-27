@@ -1,6 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
+import { getAuth, GoogleAuthProveider} from "firebase/auth";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB4LIYMbrVn29b4xWG1dlDrAsUseCtQlYY",
@@ -15,4 +16,21 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db=getDatabase(app)
-export default db
+const auth=getAuth(app)
+const provider=new GoogleAuthProveider();
+
+export {db,auth,provider}
+
+
+// in firebase Login-> console ->Build ->Realtime Database -> Rules
+/*{
+  "rules": {
+    "messages": {
+      ".read": "auth != null",
+      ".write": "auth != null",
+      "$uid": {
+        ".validate": "auth.uid == $uid"
+      }
+    }
+  }
+}  these rule to ensure only authenticated users can read and write messages*/
