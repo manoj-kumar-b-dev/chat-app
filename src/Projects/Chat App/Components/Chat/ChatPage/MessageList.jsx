@@ -1,5 +1,5 @@
 import React from 'react'
-import {ref , onValue , query , limitToLast ,orderByChild,endBefore} from "firebase/database";
+import {ref , onValue , query , limitToLast ,orderByChild,endBefore}from "firebase/database";
 import { db , auth } from '../../../Scripts/firebase';
 import formatTime from '../../../Utils/time';
 
@@ -13,7 +13,7 @@ function MessageList({chatId}) {
   React.useEffect(()=>
   {
     const chatRef=ref(db,`chats/${chatId}/messages`);
-    const messagesQuery=query(chatRef, limitToLast(15));
+    const messagesQuery=query(chatRef, limitToLast(12));
     const unsubscribe=onValue(messagesQuery,(snapShot)=>
     {
         const data=snapShot.val() || {};
@@ -37,11 +37,10 @@ function MessageList({chatId}) {
 const loadOlderMessage=()=>
 {
    const chatRef=ref(db,`chats/${chatId}/messages`);
-   const messagesQuery=query(chatRef,endBefore(lastVisible),limitToLast(15));
+   const messagesQuery=query(chatRef,orderByChild("timestamp"),endBefore(lastVisible),limitToLast(12));
    const unSubscribe=onValue(messagesQuery,(snapshot)=>
   {
     const data=snapshot.val() || {}
-    console.log(data)
     const parsed=Object.values(data)
     setMessages(prev=>[...prev,...parsed])
   })
@@ -64,7 +63,7 @@ React.useEffect(()=>
   return (
     <>
        {messages?
-       <ul onScroll={handleScroll} className='pt-5  pl-5 pr-5 overflow-y-auto '>
+       <ul onScroll={handleScroll} className='pt-5 h-500  pl-5 pr-5 overflow-y-auto '>
           {messages.map((message)=>
 
           <li className={`flex mb-2 ${message.senderId===currentUser?"justify-end":"justify-start"}`} key={message.id}>
