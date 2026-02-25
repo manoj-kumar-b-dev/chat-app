@@ -22,7 +22,7 @@ function ChatHome() {
         <div className='flex justify-between'>
           <UsersProvider><UserList setSelectUser={setSelectUser} /></UsersProvider>
 
-          {selectUser?<ChatWindow chatId={chatId}/>:<div className='flex flex-1 justify-center items-center h-screen border-l-1 boreder-black'><p>Select a chat to start message</p></div>}
+          {selectUser?<ChatWindow chatId={chatId}/>:<div className='flex flex-1 justify-center items-center h-171 border-l-1 boreder-black'><p>Select a chat to start message</p></div>}
         </div>
     </main>
   

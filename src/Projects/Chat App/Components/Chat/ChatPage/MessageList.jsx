@@ -63,15 +63,16 @@ React.useEffect(()=>
   return (
     <>
        {messages?
-       <ul onScroll={handleScroll} className='pt-5 h-500  pl-5 pr-5 overflow-y-auto '>
+       <ul onScroll={handleScroll} className='pt-5 h-full  pl-5 pr-5 overflow-y-auto '>
           {messages.map((message)=>
 
           <li className={`flex mb-2 ${message.senderId===currentUser?"justify-end":"justify-start"}`} key={message.id}>
+
             <div className={`px-4 py-[8px] rounded-2xl max-w-[700px] bg-[rgb(15,234,15)] text-white `}>
               <p className='inline-block'>{message.message}</p>
               <p className='ml-3 text-[14px] text-[rgb(230,230,230)] mt-[2px] inline-block'>{formatTime(message.timestamp)}</p>
-
             </div>
+            
           </li>
           
           )}
