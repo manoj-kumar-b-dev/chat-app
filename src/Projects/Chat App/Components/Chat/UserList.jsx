@@ -4,9 +4,7 @@ import {auth} from "../../Scripts/firebase.js"
 function UserList({setSelectUser}) {
   const { users } = useContext(UsersContext)
   const me=auth.currentUser.uid
-  console.log(me);
-  console.log(users)
-  console.log(Date())
+
   return (
       <section className='w-100 mr-6 '>
         {users.filter(user=>user.uid!==me).map((user)=><div onClick={()=>setSelectUser(user)} className='bg-[red] py-2 pl-5 mt-4 rounded-lg text-white' key={user.uid}>{user.name}</div>)}

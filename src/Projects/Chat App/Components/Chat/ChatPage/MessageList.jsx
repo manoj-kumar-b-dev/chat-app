@@ -1,5 +1,5 @@
 import React from 'react'
-import {ref , onValue , query , limitToLast ,orderByChild,endBefore}from "firebase/database";
+import {ref , onValue ,get, query , limitToLast ,orderByChild,endBefore}from "firebase/database";
 import { db , auth } from '../../../Scripts/firebase';
 import formatTime from '../../../Utils/time';
 
@@ -7,14 +7,13 @@ function MessageList({chatId}) {
   const [messages,setMessages]=React.useState(null)
   const currentUser=auth.currentUser.uid
   const scrollElement=React.useRef() 
-  const [scroll,setScroll]=React.useState(null)
   const [lastVisible,setLastVisible]=React.useState(null)
 
   React.useEffect(()=>
   {
     const chatRef=ref(db,`chats/${chatId}/messages`);
-    const messagesQuery=query(chatRef, limitToLast(12));
-    const unsubscribe=onValue(messagesQuery,(snapShot)=>
+    const messagesQuery=query(chatRef, limitToLast(18));
+    const unSubscribe= onValue(messagesQuery,(snapShot)=>
     {
         const data=snapShot.val() || {};
         const parsed=Object.values(data);
@@ -23,47 +22,49 @@ function MessageList({chatId}) {
         {
           setLastVisible(parsed[0].timestamp)
         }
-        setMessages(parsed);
-        setScroll(true)
-       
+        setMessages(parsed); 
     })
-    
-    return ()=> unsubscribe()
+    return ()=> unSubscribe()
   }     
   ,[chatId])
 
 
 
-const loadOlderMessage=()=>
-{
+const loadOlderMessage=async()=>
+{ 
+   
+   if(!lastVisible) return
+
    const chatRef=ref(db,`chats/${chatId}/messages`);
-   const messagesQuery=query(chatRef,orderByChild("timestamp"),endBefore(lastVisible),limitToLast(12));
-   const unSubscribe=onValue(messagesQuery,(snapshot)=>
+   const messagesQuery=query(chatRef,orderByChild("timestamp"),endBefore(lastVisible),limitToLast(18));
+   const snapShot=await get(messagesQuery)
+   if(snapShot.exists())
   {
-    const data=snapshot.val() || {}
-    const parsed=Object.values(data)
-    setMessages(prev=>[...prev,...parsed])
-  })
-  return ()=>unSubscribe()
+    const data=snapShot.val() || {}
+    const parsed=Object.values(data);//converts objects values into array
+    setLastVisible(parsed[0].timestamp)
+    setMessages(prev=>[...parsed,...prev]);
+  }  
+
 }
 console.log(messages)
 const handleScroll=(event)=>
 {
   if(event.target.scrollTop===0) loadOlderMessage()
-  setScroll(false)
 }
  
 React.useEffect(()=>
 {
   if(messages && scrollElement)
   {
-    scrollElement.current.scrollIntoView(true,{behavior:"smooth"})
+    scrollElement.current.scrollIntoView({behavior:"smooth"})
   }
-},[scroll])
+},[messages])
+
   return (
     <>
        {messages?
-       <ul onScroll={handleScroll} className='pt-5 h-full  pl-5 pr-5 overflow-y-auto '>
+       <ul onScroll={handleScroll} className='pt-5 h-161 pl-5 pr-5 overflow-y-auto '>
           {messages.map((message)=>
 
           <li className={`flex mb-2 ${message.senderId===currentUser?"justify-end":"justify-start"}`} key={message.id}>
@@ -72,7 +73,7 @@ React.useEffect(()=>
               <p className='inline-block'>{message.message}</p>
               <p className='ml-3 text-[14px] text-[rgb(230,230,230)] mt-[2px] inline-block'>{formatTime(message.timestamp)}</p>
             </div>
-            
+
           </li>
           
           )}
@@ -80,7 +81,7 @@ React.useEffect(()=>
         </ul>:<p>Loading... </p>}
     </>
     
-  )
+  )  
 }
 
 export default MessageList

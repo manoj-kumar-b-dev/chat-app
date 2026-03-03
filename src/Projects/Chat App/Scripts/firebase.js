@@ -2,6 +2,7 @@
 import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
 import { getAuth, GoogleAuthProvider} from "firebase/auth";
+import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
   apiKey: "AIzaSyB4LIYMbrVn29b4xWG1dlDrAsUseCtQlYY",
@@ -15,11 +16,11 @@ const firebaseConfig = {
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
-const db=getDatabase(app)
-const auth=getAuth(app)
+const db=getDatabase(app);
+const auth=getAuth(app);
 const provider=new GoogleAuthProvider();
-
-export {db,auth,provider}
+const storage=getStorage(app);
+export {db,auth,provider,storage}
 
 
 // in firebase Login-> console ->Build ->Realtime Database -> Rules

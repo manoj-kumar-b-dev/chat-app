@@ -30,7 +30,7 @@ useEffect(()=>
    
   });
   return unSubscribe;
-})
+},[])
 
 if(loading) return <div>Loading...</div>
 

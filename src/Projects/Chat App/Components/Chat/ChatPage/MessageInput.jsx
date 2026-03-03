@@ -1,5 +1,5 @@
 import React from 'react';
-import { ref , push , serverTimestamp} from 'firebase/database';
+import { ref , push ,set, serverTimestamp} from 'firebase/database';
 import { auth , db} from '../../../Scripts/firebase';
 function MessageInput({chatId}) {
   const [text,setText]=React.useState(null)
@@ -9,16 +9,18 @@ function MessageInput({chatId}) {
   {
     event.preventDefault();
     const messageRef=ref(db,`chats/${chatId}/messages`);
-    if(inputText.current.value.length===0)
+    if(text.length===0)
     {
       return 0
     }
-    await push(messageRef,{
+    const newMsgRef= push(messageRef)
+    await set(newMsgRef,{
       message:text,
       senderId:auth.currentUser.uid,
       timestamp:serverTimestamp(),
-      id:Math.random().toString(36).substring(2) + Date.now().toString(36)
-    })
+      id:newMsgRef.key}
+    )
+   
     setText(null)
     inputText.current.value=""
   }

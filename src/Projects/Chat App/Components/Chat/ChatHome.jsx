@@ -15,14 +15,14 @@ function ChatHome() {
   {
     chatId=currentUser < selectUser.uid ? currentUser + selectUser.uid : selectUser.uid + currentUser
   }
-  
+  console.log(auth.currentUser)
   return (
     <main>   
         <Header />
         <div className='flex justify-between'>
           <UsersProvider><UserList setSelectUser={setSelectUser} /></UsersProvider>
 
-          {selectUser?<ChatWindow chatId={chatId}/>:<div className='flex flex-1 justify-center items-center h-171 border-l-1 boreder-black'><p>Select a chat to start message</p></div>}
+          {selectUser?<ChatWindow chatId={chatId}/>:<div className='flex flex-1 justify-center items-center h-171 border-l-1 border-black'><p>Select a chat to start message</p></div>}
         </div>
     </main>
   

@@ -1,21 +1,31 @@
 import React from 'react'
 import {createUserWithEmailAndPassword,updateProfile} from 'firebase/auth';
-import { auth } from "../../Scripts/firebase";
+import { auth , storage } from "../../Scripts/firebase";
+import { set , ref } from "firebase/database"
+import { uploadBytes ,getDownloadURL } from 'firebase/storage';
+
 
 function Register({setRegister}) {
   const [email,setEmail]=React.useState(""); 
   const [password,setPassword]=React.useState("");   
   const [name,setName]=React.useState("");
+  const [file,setFile]=React.useState(null);
+
   const handleSignUp=async()=>
  {
+    
     try {
       const userCredential = await createUserWithEmailAndPassword(auth,email,password);
       const user=userCredential.user;
-      console.log("User Registered ",user.uid);
-
+      let storageRef=ref(storage,`avatars/${user.uid}`);
+      await uploadBytes(storageRef,file)
+      const photoUrl=await getDownloadURL(storageRef)
       await updateProfile(userCredential.user, {
-      displayName: name
+      displayName: name || "anonymous",
+      photoURL:photoUrl
     });
+
+    await user.reload()
 
     console.log("User created:", userCredential.user.displayName);
     
@@ -24,6 +34,8 @@ function Register({setRegister}) {
       console.log(error.message)
     }
  }
+
+
   return (
     <>
       <main className='flex flex-col relative items-center bg-[rgba(241,179,21,0.8)] w-100 h-110 shadow-2xl rounded-2xl'>
@@ -36,6 +48,7 @@ function Register({setRegister}) {
           <input value={name} onChange={(e)=>setName(e.target.value)} className='border-1 border-[white] px-5 py-2 outline-none rounded-xl placeholder-white'  type="text" placeholder='Name' required/>
           <input value={email} onChange={(e)=>setEmail(e.target.value)} className='border-1 border-[white] px-5 py-2 outline-none rounded-xl placeholder-white'  type="email" placeholder='Email' required/>
           <input value={password} onChange={(e)=>setPassword(e.target.value)} className='border-1 border-[white] px-5 py-2 outline-none rounded-xl placeholder-white' type="password" placeholder='Password'  required/>
+          <input onChange={event=>setFile(event.target.files[0])}type='file' />
         </section>
 
         <footer>

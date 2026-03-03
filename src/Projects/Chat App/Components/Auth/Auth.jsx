@@ -49,13 +49,13 @@ function Auth() {
           </div> 
           }
 
-          <form action={handleSignIn} className='flex flex-col gap-5 mt-7 w-70 '>
+          <form onSubmit={handleSignIn} className='flex flex-col gap-5 mt-7 w-70 '>
 
             <input ref={email} className='border-1 border-[white] px-5 py-2 outline-none rounded-xl placeholder-white'  type="email" placeholder='Email' required/>
 
             <input ref={password} className='border-1 border-[white] px-5 py-2 outline-none rounded-xl placeholder-white' type="password" placeholder='Password'  required/>
 
-            <button className='mt-3 bg-[rgba(22,54,236,0.7)] rounded-xl py-[10px] text-white outline-none' type="submit" onClick={handleSignIn}>Sign in</button>
+            <button type='submit' className='mt-3 bg-[rgba(22,54,236,0.7)] rounded-xl py-[10px] text-white outline-none ' >Sign in</button>
 
           </form>
           
