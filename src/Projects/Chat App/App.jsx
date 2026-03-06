@@ -10,20 +10,15 @@ const [user,setUser]=React.useState(null);
 const [loading,setLoading]=React.useState(true);
 useEffect(()=>
 {
-  const unSubscribe=onAuthStateChanged(auth,(currentUser)=>
+  const unSubscribe=onAuthStateChanged(auth,async(currentUser)=>
   {
-   if(currentUser)
-   {
-    setUser(currentUser);
-    setLoading(false);
-    set(ref(db, `users/${currentUser.uid}`), {
-      name: currentUser.displayName || "Anonymous",
-      email: currentUser.email,
-      uid: currentUser.uid
-    });
-   }
-   else
-   {
+    if(currentUser)
+    { 
+      setUser(currentUser);
+      setLoading(false);
+    }
+    else
+    {
     setUser(null);
     setLoading(false);
    }

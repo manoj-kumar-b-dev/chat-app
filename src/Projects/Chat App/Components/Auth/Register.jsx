@@ -1,8 +1,8 @@
 import React from 'react'
 import {createUserWithEmailAndPassword,updateProfile} from 'firebase/auth';
-import { auth , storage } from "../../Scripts/firebase";
-import { set , ref } from "firebase/database"
-import { uploadBytes ,getDownloadURL } from 'firebase/storage';
+import { auth,db } from "../../Scripts/firebase";
+import { set , push , ref } from "firebase/database"
+
 
 
 function Register({setRegister}) {
@@ -11,28 +11,80 @@ function Register({setRegister}) {
   const [name,setName]=React.useState("");
   const [file,setFile]=React.useState(null);
 
-  const handleSignUp=async()=>
+  const handleSignUp=async(event)=>
  {
+  event.preventDefault();
+  /*
+    const emailRegex=/^[a-z0-9A-Z.-_]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
+    const passwordRegex=/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\S+$).{8,20}$/
     
-    try {
+    if(name.trim()==="")
+    {
+      alert("name should not be empty");
+    }
+    if(!emailRegex.test(email))
+    {
+      alert("please provide a properly formatted email address");
+    }
+    if(!passwordRegex.test(password))
+    {
+      alert("Password must contains uppercase , lowercase , digits and symbol");
+    }*/
+  
+    try 
+    {
       const userCredential = await createUserWithEmailAndPassword(auth,email,password);
       const user=userCredential.user;
-      let storageRef=ref(storage,`avatars/${user.uid}`);
-      await uploadBytes(storageRef,file)
-      const photoUrl=await getDownloadURL(storageRef)
-      await updateProfile(userCredential.user, {
-      displayName: name || "anonymous",
-      photoURL:photoUrl
+
+      const profileUrl=await getProfileUrl(file)
+      await updateProfile(user,
+        {
+          displayName:name,
+          photoURL:profileUrl.url
+        }
+      )
+      await set(ref(db, `users/${user.uid}`), {
+      email: user.email,
+      uid: user.uid,
+      name:name || "",
+      avatar:profileUrl.url || ""
     });
-
-    await user.reload()
-
-    console.log("User created:", userCredential.user.displayName);
-    
+      console.log(user)
+      console.log(profileUrl)
+      
     }
-    catch(error) {
-      console.log(error.message)
+    catch(error) 
+    {
+      console.error("Error during registration:", error.message);
     }
+ }
+
+ async function getProfileUrl()
+ {
+   const data=new FormData()
+   data.append("file",file)
+   data.append("upload_preset","upload_profile_pic")
+   try{
+    const res=await fetch("https://api.cloudinary.com/v1_1/ddfkwexvu/image/upload",
+      {
+        method:"POST",
+        body:data
+      }
+    )
+
+    const result=res.json();
+    return result
+   }
+   catch(error)
+   {
+     console.log("failed to upload image",error)
+   }
+   finally
+   {
+    console.log("file uploaded succesfully")
+   }
+
+
  }
 
 
@@ -44,15 +96,15 @@ function Register({setRegister}) {
           <p className='text-xl text-white'>Register</p>
         </header>
         
-        <section className='flex flex-col gap-5 mt-10 w-70 '>
-          <input value={name} onChange={(e)=>setName(e.target.value)} className='border-1 border-[white] px-5 py-2 outline-none rounded-xl placeholder-white'  type="text" placeholder='Name' required/>
-          <input value={email} onChange={(e)=>setEmail(e.target.value)} className='border-1 border-[white] px-5 py-2 outline-none rounded-xl placeholder-white'  type="email" placeholder='Email' required/>
-          <input value={password} onChange={(e)=>setPassword(e.target.value)} className='border-1 border-[white] px-5 py-2 outline-none rounded-xl placeholder-white' type="password" placeholder='Password'  required/>
-          <input onChange={event=>setFile(event.target.files[0])}type='file' />
-        </section>
+        <form onSubmit={handleSignUp} className='flex flex-col gap-5 mt-10 w-70 '>
+          <input  onChange={(e)=>setName(e.target.value)} className='border-1 border-[white] px-5 py-2 outline-none rounded-xl placeholder-white'  type="text" placeholder='Name' required/>
+          <input  onChange={(e)=>setEmail(e.target.value)} className='border-1 border-[white] px-5 py-2 outline-none rounded-xl placeholder-white'  type="email" placeholder='Email' required/>
+          <input  onChange={(e)=>setPassword(e.target.value)} className='border-1 border-[white] px-5 py-2 outline-none rounded-xl placeholder-white' type="password" placeholder='Password'  required/>
+          <input onChange={event=>setFile  (event.target.files[0])}type='file' required />
+          <button className='cursor-pointer bg-[rgba(236,115,22,0.7)] rounded-xl py-2 text-white' type='submit'>Sign Up</button> 
+        </form>
 
-        <footer>
-          <button className='cursor-pointer mt-5 bg-[rgba(236,115,22,0.7)] rounded-xl px-29 py-[10px] text-white' onClick={handleSignUp}>Sign Up</button>  
+        <footer> 
           <button className='py-1 absolute bottom-7 left-6 px-4 rounded-lg cursor-pointer text-white bg-[rgba(255,143,16,1)]' onClick={()=>setRegister(prev=>!prev)}>Back</button> 
         </footer>
         
