@@ -35,7 +35,7 @@ console.log(location)
     location && fetchWeatherData(apiKey,location).then((data=>
     {
       setWeatherForecast(data)
-      setError("")
+      setError(null)
     }
     )).catch(error=>setError(error))
   },[location])
@@ -48,7 +48,7 @@ console.log(location)
   })
   function addLocation()
   {
-   setLocation(locationInput.current.value);
+   setLocation(locationInput.current.Value);
    
   }
 
@@ -61,7 +61,7 @@ console.log(location)
             <button type='submit' onClick={addLocation} className='border-2 rounded-xl h-11 cursor-pointer w-15 shadow-lg  border-[rgba(40,145,238,1)] text-2xl'>+</button>
           </div>
 
-           {errorMessage?<p className='!text-[red] text-lg ml-9'>{errorMessage.message}</p>:null}
+           {errorMessage?<p className='!text-[red] text-lg ml-9'>{errorMessage.message || errorMessage}</p>:null}
 
         <div className='mt-8 ml-8'>
           <section className=''>

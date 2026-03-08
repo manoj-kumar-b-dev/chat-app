@@ -72,7 +72,7 @@ function Register({setRegister}) {
       }
     )
 
-    const result=res.json();
+    const result=await res.json();
     return result
    }
    catch(error)

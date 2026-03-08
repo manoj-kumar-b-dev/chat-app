@@ -2,14 +2,14 @@ import React from 'react';
 import { ref , push ,set, serverTimestamp} from 'firebase/database';
 import { auth , db} from '../../../Scripts/firebase';
 function MessageInput({chatId}) {
-  const [text,setText]=React.useState(null)
+  const [text,setText]=React.useState("")
   const inputText=React.useRef(null)
  console.log()
   const sendMessage=async (event)=>
   {
     event.preventDefault();
     const messageRef=ref(db,`chats/${chatId}/messages`);
-    if(text.length===0)
+    if(text.trim().length===0) 
     {
       return 0
     }
