@@ -27,7 +27,7 @@ function MessageInput({chatId}) {
 
   return (
     <form onSubmit={sendMessage}className='flex justify-between items-center border-t-1 '>
-      <input ref={inputText} onKeyUp={(event)=>setText(event.target.value)} className='flex-1 outline-none h-12 pl-4 text-md'  type="text" />
+      <input ref={inputText} onKeyUp={(event)=>setText(event.target.value)} className='flex-1 outline-none px-10 mb-2 h-10 pl-4 text-md' type="text" />
       {text?<button className='border-1 mr-4 rounded-2xl w-20 bg-[blue] text-white h-10' type='submit' >Send</button>:null}
     </form>
   )
