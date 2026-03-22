@@ -1,118 +1,112 @@
-import React from 'react'
-import {createUserWithEmailAndPassword,updateProfile} from 'firebase/auth';
-import { auth,db } from "../../Scripts/firebase";
-import { set , push , ref } from "firebase/database"
+import React, { useState } from 'react';
+import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
+import { auth, db } from "../../Scripts/firebase";
+import { set, ref } from "firebase/database";
+import { getFileUrl } from '../../Utils/uploadFiles';
 
+function Register({ setRegister }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [name, setName] = useState("");
+  const [file, setFile] = useState(null);
 
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
-function Register({setRegister}) {
-  const [email,setEmail]=React.useState(""); 
-  const [password,setPassword]=React.useState("");   
-  const [name,setName]=React.useState("");
-  const [file,setFile]=React.useState(null);
+  const handleSignUp = async (event) => {
+    event.preventDefault();
+    setError("");
 
-  const handleSignUp=async(event)=>
- {
-  event.preventDefault();
-  /*
-    const emailRegex=/^[a-z0-9A-Z.-_]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
-    const passwordRegex=/^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\S+$).{8,20}$/
-    
-    if(name.trim()==="")
-    {
-      alert("name should not be empty");
-    }
-    if(!emailRegex.test(email))
-    {
-      alert("please provide a properly formatted email address");
-    }
-    if(!passwordRegex.test(password))
-    {
-      alert("Password must contains uppercase , lowercase , digits and symbol");
-    }*/
-  
-    try 
-    {
-      const userCredential = await createUserWithEmailAndPassword(auth,email,password);
-      const user=userCredential.user;
+    const passwordRegex = /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$%^&+=])(?=\S+$).{8,20}$/;
 
-      const profileUrl=await getProfileUrl(file)
-      await updateProfile(user,
-        {
-          displayName:name,
-          photoURL:profileUrl.url
-        }
-      )
+    if (name.trim() === "") return setError("Name cannot be empty.");
+    if (!passwordRegex.test(password)) return setError("Password requires uppercase, lowercase, numbers, and symbols.");
+    if (!file) return setError("Please upload a profile picture.");
+
+    try {
+      setLoading(true);
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      const profileUrl = await getFileUrl(file);
+
+      await updateProfile(user, {
+        displayName: name,
+        photoURL: profileUrl.url
+      });
+
       await set(ref(db, `users/${user.uid}`), {
-      email: user.email,
-      uid: user.uid,
-      name:name || "",
-      avatar:profileUrl.url || ""
-    });
-      console.log(user)
-      console.log(profileUrl)
-      
+        email: user.email,
+        uid: user.uid,
+        name: name,
+        avatar: profileUrl.url
+      });
+
+    } catch (err) {
+      console.error("Error during registration:", err);
+      setError(err.message.replace("Firebase: ", ""));
+    } finally {
+      setLoading(false);
     }
-    catch(error) 
-    {
-      console.error("Error during registration:", error.message);
-    }
- }
-
- async function getProfileUrl()
- {
-   const data=new FormData()
-   data.append("file",file)
-   data.append("upload_preset","upload_profile_pic")
-   try{
-    const res=await fetch("https://api.cloudinary.com/v1_1/ddfkwexvu/image/upload",
-      {
-        method:"POST",
-        body:data
-      }
-    )
-
-    const result=await res.json();
-    return result
-   }
-   catch(error)
-   {
-     console.log("failed to upload image",error)
-   }
-   finally
-   {
-    console.log("file uploaded succesfully")
-   }
-
-
- }
-
+  }
 
   return (
-    <>
-      <main className='flex flex-col relative items-center bg-[rgba(241,179,21,0.8)] w-100 h-110 shadow-2xl rounded-2xl'>
+    <section className='flex flex-col items-center bg-orange-500 w-full max-w-md p-8 shadow-2xl rounded-2xl'>
+      <header className='w-full border-b-2 border-white/50 pb-4 mb-6 text-center'>
+        <p className='text-3xl font-bold tracking-wide text-white'>Register</p>
+      </header>
 
-        <header className='flex justify-center w-100 mt-4 py-2 px-20 border-b-2 border-white'>
-          <p className='text-xl text-white'>Register</p>
-        </header>
-        
-        <form onSubmit={handleSignUp} className='flex flex-col gap-5 mt-10 w-70 '>
-          <input  onChange={(e)=>setName(e.target.value)} className='border-1 border-[white] px-5 py-2 outline-none rounded-xl placeholder-white'  type="text" placeholder='Name' required/>
-          <input  onChange={(e)=>setEmail(e.target.value)} className='border-1 border-[white] px-5 py-2 outline-none rounded-xl placeholder-white'  type="email" placeholder='Email' required/>
-          <input  onChange={(e)=>setPassword(e.target.value)} className='border-1 border-[white] px-5 py-2 outline-none rounded-xl placeholder-white' type="password" placeholder='Password'  required/>
-          <input onChange={event=>setFile  (event.target.files[0])}type='file' required />
-          <button className='cursor-pointer bg-[rgba(236,115,22,0.7)] rounded-xl py-2 text-white' type='submit'>Sign Up</button> 
-        </form>
+      {error && (
+        <div className='w-full mb-4 text-red-100 bg-red-800/60 font-medium px-4 py-3 rounded-lg text-sm text-center'>
+          {error}
+        </div>
+      )}
 
-        <footer> 
-          <button className='py-1 absolute bottom-7 left-6 px-4 rounded-lg cursor-pointer text-white bg-[rgba(255,143,16,1)]' onClick={()=>setRegister(prev=>!prev)}>Back</button> 
-        </footer>
-        
-      </main>
-      
-    </>
-    
+      <form onSubmit={handleSignUp} className='flex flex-col gap-4 w-full'>
+        <input
+          onChange={(e) => setName(e.target.value)}
+          className='border border-white/40 bg-white/10 px-5 py-3 outline-none rounded-xl text-white placeholder-white/70 focus:border-white transition-all'
+          type="text" placeholder='Full Name' required
+        />
+        <input
+          onChange={(e) => setEmail(e.target.value)}
+          className='border border-white/40 bg-white/10 px-5 py-3 outline-none rounded-xl text-white placeholder-white/70 focus:border-white transition-all'
+          type="email" placeholder='Email Address' required
+        />
+        <input
+          onChange={(e) => setPassword(e.target.value)}
+          className='border border-white/40 bg-white/10 px-5 py-3 outline-none rounded-xl text-white placeholder-white/70 focus:border-white transition-all'
+          type="password" placeholder='Password' required
+        />
+
+        <div className='flex flex-col gap-2 mt-2'>
+          <label htmlFor="avatar" className='w-full border-2 border-dashed border-white/60 hover:bg-white/20 transition-all rounded-xl py-4 flex flex-col items-center justify-center cursor-pointer'>
+            <span className='font-bold text-white mb-1'>Profile Picture</span>
+            <span className='text-white/80 text-sm'>{file ? `Selected: ${file.name}` : "Click to select"}</span>
+            <input id="avatar" className='hidden' onChange={(e) => setFile(e.target.files[0])} type='file' accept="image/*" required />
+          </label>
+        </div>
+
+        <button
+          type='submit'
+          disabled={loading}
+          className='mt-4 bg-white hover:bg-gray-100 transition-colors  rounded-xl py-3 font-bold text-orange-600 outline-none cursor-pointer'
+        >
+          {loading ? "Creating Account..." : "Sign Up"}
+        </button>
+      </form>
+
+      <footer className='mt-6 mb-2'>
+        <button
+          type="button"
+          className='py-2 px-6 rounded-xl font-medium hover:bg-white/20 cursor-pointer text-white border border-white/50 transition-colors'
+          onClick={setRegister}
+        >
+          Back to Login
+        </button>
+      </footer>
+    </section>
   )
 }
 
-export default Register
+export default Register;

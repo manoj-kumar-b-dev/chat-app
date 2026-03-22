@@ -1,34 +1,31 @@
-import {createContext , useEffect , useState} from 'react'
+import { createContext, useEffect, useState } from 'react'
 import { db } from "../Scripts/firebase.js";
-import { ref , onValue } from 'firebase/database';
+import { ref, onValue } from 'firebase/database';
 
-const UsersContext=createContext();
+const UsersContext = createContext();
 
-function UsersProvider({children}) {
-  const [users,setUsers]=useState([]);
-  useEffect(()=>
-  {
+function UsersProvider({ children }) {
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
     const usersRef = ref(db, 'users');// Reference to the 'users' node in the database
     const unsubscribe = onValue(usersRef, (snapshot) => {
       const data = snapshot.val()
-      if(data)
-      {
-        const parsed=Object.keys(data).map((uid)=>
-        {
-          return {uid, ...data[uid]}
+      if (data) {
+        const parsed = Object.keys(data).map((uid) => {
+          return { uid, ...data[uid] }
         })
+        console.log(parsed)
         setUsers(parsed);
       }
-      else
-      {
+      else {
         setUsers([]);
-      } 
+      }
 
     });
     return () => unsubscribe();
-    
-  }
-  ,[])
+
+  }, [])
 
   return (
     <UsersContext.Provider value={{ users, setUsers }}>
