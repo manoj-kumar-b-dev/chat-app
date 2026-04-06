@@ -20,10 +20,13 @@ function Login({ setRegister }) {
     setLoading(false);
   }
 
+
+
   return (
     <div className='flex flex-col items-center bg-blue-600 w-full max-w-md p-8 shadow-2xl rounded-2xl'>
       <header className='w-full mt-2 mb-6 border-b-2 border-white/50 pb-4 text-center'>
-        <p className='text-3xl font-bold text-white tracking-wid e'>Login</p>
+        <p className='text-3xl font-bold text-white tracking-wide'>Login</p> {/*tracking wide used for spacing letters*/}
+
       </header>
 
       {authError && (

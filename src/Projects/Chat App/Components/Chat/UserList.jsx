@@ -1,7 +1,8 @@
 import { useContext, useState, useMemo } from 'react'
 import { UsersContext } from "../../Context/UsersContext.jsx";
 import { auth } from "../../Scripts/firebase.js"
-
+import Header from './ChatPage/Header.jsx';
+import { AuthContextProvider } from '../../Context/AuthContext.jsx';
 // Passed in selectUser object to track currently active highlighted chat
 function UserList({ selectUser, setSelectUser }) {
   const { users } = useContext(UsersContext)
@@ -23,8 +24,14 @@ function UserList({ selectUser, setSelectUser }) {
     <section className='flex flex-col w-full h-full bg-white select-none overflow-hidden'>
 
       {/* Header Profile Title & App Area */}
-      <div className="p-5 pb-3 border-b border-gray-100 flex items-center justify-between">
+      <div className="px-5 py-1 pb-3 border-b border-gray-100 flex items-center justify-between">
         <h1 className="text-xl font-bold text-gray-800 tracking-tight">Chats</h1>
+        <div >
+          <AuthContextProvider  >
+            <Header />
+          </AuthContextProvider>
+        </div>
+
       </div>
 
       <header className='p-4 border-b border-gray-100 bg-gray-50/50'>
@@ -43,39 +50,30 @@ function UserList({ selectUser, setSelectUser }) {
       <ul className='flex-1 overflow-y-auto overflow-x-hidden p-2 space-y-1 min-h-0'>
         {filteredUsers?.length > 0 ? (
           filteredUsers.map((user) => {
-            const isActive = selectUser?.uid === user.uid;
 
             return (
               <li
                 onClick={() => setSelectUser(user)}
-                className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all duration-200 border border-transparent ${isActive
-                  ? 'bg-blue-50 border-blue-100 shadow-[0_1px_3px_rgba(59,130,246,0.1)] scale-[0.98]'
-                  : 'hover:bg-gray-50 active:scale-[0.98]'
-                  }`}
+                className={`flex items-center gap-3 p-3 rounded-xl cursor-pointer transition-all duration-200 border border-transparent hover:bg-gray-50 active:scale-[0.98]`}
+
                 key={user.uid}
               >
-                <div className="relative">
+                <div>
                   <img
                     src={user.avatar || 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png'}
-                    className={`w-12 h-12 rounded-full object-cover flex-shrink-0 border-2 ${isActive ? 'border-transparent' : 'border-white'} shadow-sm`}
+                    className={`w-12 h-12 rounded-full object-cover flex-shrink-0 border-2  border-white shadow-sm`}
                     alt={`${user.name} avatar`}
                   />
-                  {/* Subtle online indicator dot styling */}
-                  <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-white"></div>
+
                 </div>
 
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-baseline mb-0.5">
-                    <p className={`font-semibold truncate ${isActive ? 'text-blue-700' : 'text-gray-900'}`}>
+                    <p className={`font-semibold truncate  text-blue-700`}>
                       {user.uid === me ? "You" : user.name}
                     </p>
-                    <span className="text-xs text-gray-400 flex-shrink-0">
-                      Just now
-                    </span>
                   </div>
-                  <p className={`text-sm truncate ${isActive ? 'text-blue-500/80' : 'text-gray-500'}`}>
-                    Available...
-                  </p>
+
                 </div>
               </li>
             );

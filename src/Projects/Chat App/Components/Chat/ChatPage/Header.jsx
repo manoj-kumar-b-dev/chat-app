@@ -5,9 +5,7 @@ function Header() {
   const { handleSignOut } = React.useContext(authContext);
 
   return (
-    <header className='h-[80px] py-2 w-full flex items-center justify-between px-6 bg-white border-b border-gray-100 shadow-[0_1px_3px_0_rgba(0,0,0,0.02)] sticky top-0 z-10'>
-
-
+    <header className='h-[50px] py-2 w-full  px-6 bg-white border-b border-gray-100 shadow-[0_1px_3px_0_rgba(0,0,0,0.02)] sticky top-0 z-10'>
       <button
         onClick={handleSignOut}
         className='flex items-center gap-2 group px-4 py-2 bg-white text-rose-500 border border-gray-200 rounded-lg text-sm font-semibold hover:bg-rose-50 hover:border-rose-200 hover:text-rose-600 transition-all duration-200 active:scale-95 shadow-sm'

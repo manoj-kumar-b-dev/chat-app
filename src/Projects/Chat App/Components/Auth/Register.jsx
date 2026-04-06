@@ -21,7 +21,7 @@ function Register({ setRegister }) {
 
     if (name.trim() === "") return setError("Name cannot be empty.");
     if (!passwordRegex.test(password)) return setError("Password requires uppercase, lowercase, numbers, and symbols.");
-    if (!file) return setError("Please upload a profile picture.");
+
 
     try {
       setLoading(true);
@@ -83,7 +83,7 @@ function Register({ setRegister }) {
           <label htmlFor="avatar" className='w-full border-2 border-dashed border-white/60 hover:bg-white/20 transition-all rounded-xl py-4 flex flex-col items-center justify-center cursor-pointer'>
             <span className='font-bold text-white mb-1'>Profile Picture</span>
             <span className='text-white/80 text-sm'>{file ? `Selected: ${file.name}` : "Click to select"}</span>
-            <input id="avatar" className='hidden' onChange={(e) => setFile(e.target.files[0])} type='file' accept="image/*" required />
+            <input id="avatar" className='hidden' onChange={(e) => setFile(e.target.files[0])} type='file' accept="image/*" />
           </label>
         </div>
 

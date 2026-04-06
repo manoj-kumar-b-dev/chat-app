@@ -1,19 +1,12 @@
-import React from 'react';
-import Header from "./Header.jsx"
 import MessageInput from "./MessageInput.jsx";
 import MessageList from "./MessageList.jsx";
-import { AuthContextProvider } from '../../../Context/AuthContext.jsx';
-function ChatWindow({chatId}) {
-  console.log(chatId)
-  
+
+function ChatWindow({ chatId }) {
   return (
-   <div  className='flex flex-col justify-between flex-1 h-screen'>
-      <AuthContextProvider>
-        <Header />
-      </AuthContextProvider>
-      <MessageList chatId={chatId}  />
-      <MessageInput chatId={chatId} /> 
-   </div>  
+    <div className='flex flex-col justify-between flex-1 h-screen'>
+      <MessageList chatId={chatId} />
+      <MessageInput chatId={chatId} />
+    </div>
   )
 }
 
