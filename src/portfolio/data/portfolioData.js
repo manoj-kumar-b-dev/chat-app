@@ -1,4 +1,4 @@
-
+import { FaReact, FaNodeJs, FaDatabase, FaGitAlt } from 'react-icons/fa';
 import { FaGithub } from 'react-icons/fa6';
 import { SiJavascript, SiTailwindcss, SiMongodb, SiExpress } from 'react-icons/si';
 
@@ -73,7 +73,7 @@ export const portfolioData = {
   ],
   contact: {
     email: "[EMAIL_ADDRESS]",
-    github: "",
+    github: "https://github.com",
     linkedin: "https://linkedin.com"
   }
 };
